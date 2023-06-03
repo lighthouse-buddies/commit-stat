@@ -5,4 +5,3 @@
 ```shell
 sh commit-stat.sh
 ```
-

@@ -1,37 +1,51 @@
 #!/bin/bash
 
-# Loop indefinitely
-while true
+# Function to add a line, commit, and echo a message
+addline_commit_echo_a_message() {
+  local message=$1
+  local filepath=$2
+
+  # Add new line to log
+  echo -e "$message" >> "$filepath"
+
+  # Add file changes
+  git add "$filepath"
+
+  # Commit changes with log message
+  git commit -m "$message"
+
+  # Print the message
+  echo "Message: $message"
+}
+
+# Check if there are 2 input numbers
+if [[ $# -eq 2 ]]; then
+  # Generate random number between the two input numbers
+  random_number=$(shuf -i "$1-$2" -n 1)
+  times=$random_number
+else
+  # If there is only one input number, use it as the "times" value
+  times=$1
+fi
+
+# Loop "times-1" number of times
+for ((i=1; i<$times; i++))
 do
-  # Check if current time is within specified time range (9-11am and 1-6pm)
-  # current_hour=$(date +%H)
-  # if [[ ( "$current_hour" -ge 9 && "$current_hour" -lt 11 ) || ( "$current_hour" -ge 13 && "$current_hour" -lt 18 ) ]]; then
-    # Add new line to log
-    log_message="file updated at [$(date +%Y-%m-%d\ %H:%M:%S)]"
-    echo "$log_message" >> log.txt
+  # Set the log message as a dot
+  log_message="."
 
-    # Add file changes
-    git add log.txt
-
-    # Commit changes with log message
-    git commit -m "$log_message"
-
-    # Push changes
-    git push
-
-    # Generate random wait time between 10 and 20 minutes (900-1800 seconds)
-    wait_time=$((RANDOM%601+600))
-
-    # Get current time
-    NOW=$(date +%H:%M:%S)
-
-    # Print sleep time and current time to console
-    echo "NOW: $NOW SLEEP: $((wait_time/60)) MINUTES AND $((wait_time%60)) SECONDS"
-
-    # Wait for random interval
-    sleep $wait_time
-  # else
-  #   # If current time is not within time range, wait for 1 minute before checking again
-  #   sleep 60
-  # fi
+  # Call the function to add a line, commit, and echo the message
+  addline_commit_echo_a_message "$log_message" "log.txt"
 done
+
+# Get the current date
+current_date=$(date +%Y-%m-%d)
+
+# Set the last log message with date and total commits
+log_message="Last commit on $current_date, total commits: $times"
+
+# Call the function to add a line, commit, and echo the final log message
+addline_commit_echo_a_message "$log_message" "log.txt"
+
+# Push the changes
+git push
